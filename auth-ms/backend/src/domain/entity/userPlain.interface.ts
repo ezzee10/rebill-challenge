@@ -1,5 +1,6 @@
 import { UserEmail } from '../value-objects/userEmail';
 
 export interface UserPlainObjectInterface {
-  userEmail: UserEmail;
+  email: UserEmail;
+  name: string;
 }
