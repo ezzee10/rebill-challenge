@@ -42,8 +42,8 @@ export class User {
     return this.name;
   }
 
-  getEmail(): string {
-    return this.email.getUserEmail();
+  getEmail(): UserEmail {
+    return this.email;
   }
 
   getSurname(): string {

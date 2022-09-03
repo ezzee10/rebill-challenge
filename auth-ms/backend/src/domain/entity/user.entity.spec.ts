@@ -13,12 +13,11 @@ describe('User class', () => {
   };
 
   it('Given an email when i create the instance then i get said email', () => {
-    const email = new UserEmail('test@test.com');
+    const email = 'test@test.com';
     const objectForTest = getObjectValid();
-    objectForTest.email = email;
     const user: User = User.fromPlainObject(objectForTest);
     expect(user).toBeInstanceOf(User);
-    expect(user.getEmail()).toBe(email.getUserEmail());
+    expect(user.getEmail().getUserEmail()).toBe(email);
   });
 
   it('Given an empty email when i create the instance then it returns an error', () => {
