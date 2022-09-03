@@ -23,4 +23,11 @@ describe('User class', () => {
     ).toThrowError('Email is invalid');
   });
 
+  it('Given an email that does not contain a dot then returns an error', () => {
+    const email = new UserEmail('email');
+    expect(() =>
+      User.isValidObjectToCreateAnUserOrThrows(email),
+    ).toThrowError('Email is invalid');
+  });
+
 });

@@ -6,9 +6,12 @@ export class UserEmail {
         this.email = email;
     }
 
+    /*TODO: Se podrian generar muchas más validaciones pero prefiero acortarlo con una regex simple*/
+    /* Tambien se podria investigar validaciones por parte del framework pero prefiero que el dominio 
+        quede más nativo y no tan acomplado a librerias */
     isValid() {
-        if (this.email.length > 0 && this.email.includes('@')) return true;
-        return false;
+        const regex = /\S+@\S+\.\S+/;
+        return regex.test(this.email);
     }
 
     getUserEmail() {
