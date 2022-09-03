@@ -21,6 +21,7 @@ describe('User class', () => {
   });
 
   // TODO: Mover estos tests unitarios a las clases de value-objects
+  // Creando desde un método estático para evitar tener que crear un constructor inválido.
   it('Given an empty email when i create the instance then it returns an error', () => {
     const userEmail = new UserEmail('');
     const objectForTest = getObjectValid();
