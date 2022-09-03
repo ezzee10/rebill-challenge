@@ -72,4 +72,13 @@ describe('User class', () => {
     expect(user).toBeInstanceOf(User);
     expect(user.getSurname()).toBe(surname);
   });
+
+  it('Given an empty surname when creating an instance then error is returned', () => {
+    const surname = '';
+    const objectForTest = getObjectValid();
+    objectForTest.surname = surname;
+    expect(() =>
+      User.isValidObjectToCreateAnUserOrThrows(objectForTest),
+    ).toThrowError('Surname is invalid');
+  });
 });
