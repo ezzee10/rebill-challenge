@@ -8,7 +8,7 @@ describe('User class', () => {
       email: new UserEmail('test@test.com'),
       name: 'Ezequiel',
       surname: 'Colombano',
-      document: new Document('DNI', 38998408),
+      document: Document.createFrom('DNI', 38998408),
     };
   };
 
@@ -20,6 +20,7 @@ describe('User class', () => {
     expect(user.getEmail().getUserEmail()).toBe(email);
   });
 
+  // TODO: Mover estos tests unitarios a las clases de value-objects
   it('Given an empty email when i create the instance then it returns an error', () => {
     const userEmail = new UserEmail('');
     const objectForTest = getObjectValid();
