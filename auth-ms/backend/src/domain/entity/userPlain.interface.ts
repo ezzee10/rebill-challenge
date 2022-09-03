@@ -1,5 +1,5 @@
-import { UserEmail } from "../value-objects/userEmail";
+import { UserEmail } from '../value-objects/userEmail';
 
-export interface userPlainObjectInterface {
-  email: UserEmail;
+export interface UserPlainObjectInterface {
+  userEmail: UserEmail;
 }

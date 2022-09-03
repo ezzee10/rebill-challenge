@@ -1,15 +1,17 @@
 import { UserEmail } from '../value-objects/userEmail';
-import { userPlainObjectInterface } from './userPlain.interface';
+import { UserPlainObjectInterface } from './userPlain.interface';
 export class User {
   private email: UserEmail;
 
-  static fromPlainObject(email: UserEmail) {
-    this.isValidObjectToCreateAnUserOrThrows(email);
-    return new User(email);
+  static fromPlainObject(object: UserPlainObjectInterface) {
+    this.isValidObjectToCreateAnUserOrThrows(object);
+    return new User(object.userEmail);
   }
 
-  static isValidObjectToCreateAnUserOrThrows(email: UserEmail) {
-    if (!(email.isValid())) {
+  static isValidObjectToCreateAnUserOrThrows(object: UserPlainObjectInterface) {
+    const { userEmail } = object;
+
+    if (!userEmail.isValid()) {
       throw new Error('Email is invalid');
     }
   }

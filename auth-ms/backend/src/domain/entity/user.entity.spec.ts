@@ -10,24 +10,23 @@ describe('User class', () => {
   });
 
   it('Given an empty email when i create the instance then it returns an error', () => {
-    const email = new UserEmail('');
+    const userEmail = new UserEmail('');
     expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(email),
+      User.isValidObjectToCreateAnUserOrThrows({ userEmail }),
     ).toThrowError('Email is invalid');
   });
 
   it('Given an email that does not contain @ then returns an error', () => {
-    const email = new UserEmail('email');
+    const userEmail = new UserEmail('email');
     expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(email),
+      User.isValidObjectToCreateAnUserOrThrows({ userEmail }),
     ).toThrowError('Email is invalid');
   });
 
   it('Given an email that does not contain a dot then returns an error', () => {
-    const email = new UserEmail('email');
+    const userEmail = new UserEmail('email');
     expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(email),
+      User.isValidObjectToCreateAnUserOrThrows({ userEmail }),
     ).toThrowError('Email is invalid');
   });
-
 });
