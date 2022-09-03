@@ -10,11 +10,11 @@ export class User {
   }
 
   static isValidObjectToCreateAnUserOrThrows(object: UserPlainObjectInterface) {
-    const { email } = object;
-    
-    if (!email.isValid()) {
-      throw new Error('Email is invalid');
-    }
+    const { email, name } = object;
+
+    if (!email.isValid()) throw new Error('Email is invalid');
+
+    if (name.length <= 0) throw new Error('Name is invalid');
   }
 
   constructor(email: UserEmail, name: string) {
