@@ -6,6 +6,7 @@ describe('User class', () => {
     return {
       email: new UserEmail('test@test.com'),
       name: 'Ezequiel',
+      surname: 'Colombano',
     };
   };
 
@@ -45,7 +46,7 @@ describe('User class', () => {
     ).toThrowError('Email is invalid');
   });
 
-  it('Given an name valid when i create the instance then i get said email ', () => {
+  it('Given an name valid when i create the instance then i get said name ', () => {
     const name = 'Ezequiel';
     const objectForTest = getObjectValid();
     objectForTest.name = name;
@@ -61,5 +62,14 @@ describe('User class', () => {
     expect(() =>
       User.isValidObjectToCreateAnUserOrThrows(objectForTest),
     ).toThrowError('Name is invalid');
+  });
+
+  it('Given an surname valid when i create the instance then i get said surname', () => {
+    const surname = 'Colombano';
+    const objectForTest = getObjectValid();
+    objectForTest.surname = surname;
+    const user = User.fromPlainObject(objectForTest);
+    expect(user).toBeInstanceOf(User);
+    expect(user.getSurname()).toBe(surname);
   });
 });
