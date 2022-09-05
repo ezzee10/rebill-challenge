@@ -13,13 +13,11 @@ export class User {
   }
 
   static isValidObjectToCreateAnUserOrThrows(object: UserPlainObjectInterface) {
-    const { email, name, surname } = object;
+    const { name, surname } = object;
 
-    if (!email.isValid()) throw new Error('Email is invalid');
+    if (name.length <= 0) throw new Error(User.ERROR_NAME_IS_INVALID);
 
-    if (name.length <= 0) throw new Error('Name is invalid');
-
-    if (surname.length <= 0) throw new Error('Surname is invalid');
+    if (surname.length <= 0) throw new Error(User.ERROR_SURNAME_IS_INVALID);
   }
 
   constructor(
@@ -49,4 +47,7 @@ export class User {
   getSurname(): string {
     return this.surname;
   }
+
+  static ERROR_NAME_IS_INVALID = 'Name is invalid';
+  static ERROR_SURNAME_IS_INVALID = 'Surname is invalid';
 }
