@@ -2,6 +2,8 @@ export class Document {
   private type: string;
   private number: number;
   private static types: string[] = ['DNI', 'CUIL', 'CUIT'];
+  //TODO: MODELAR RESPUESTAS DE ERROR
+  static DOCUMENT_ERROR_MESSAGE = 'Document is invalid';
 
   constructor(type: string, number: number) {
     this.type = type;
@@ -16,7 +18,7 @@ export class Document {
 
   static isValidToCreateDocumentOrThrows(type: string, number: number) {
     if (!this.isValidType(type) || !this.isValidNumber(number))
-      throw new Error('Document is invalid');
+      throw new Error(Document.DOCUMENT_ERROR_MESSAGE);
   }
 
   static isValidType(type: string) {

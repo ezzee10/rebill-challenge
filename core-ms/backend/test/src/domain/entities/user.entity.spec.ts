@@ -1,11 +1,11 @@
-import { User } from './user';
-import { UserEmail } from '../value-objects/userEmail';
-import { Document } from '../value-objects/document';
+import { User } from '../../../../src/domain/entity/user';
+import { UserEmail } from '../../../../src/domain/value-objects/userEmail';
+import { Document } from '../../../../src/domain/value-objects/document';
 
 describe('User class', () => {
   const getObjectValid = () => {
     return {
-      email: new UserEmail('test@test.com'),
+      email: UserEmail.createFrom('test@test.com'),
       name: 'Ezequiel',
       surname: 'Colombano',
       document: Document.createFrom('DNI', 38998408),
@@ -18,35 +18,6 @@ describe('User class', () => {
     const user: User = User.fromPlainObject(objectForTest);
     expect(user).toBeInstanceOf(User);
     expect(user.getEmail().getUserEmail()).toBe(email);
-  });
-
-  // TODO: Mover estos tests unitarios a las clases de value-objects
-  // Creando desde un método estático para evitar tener que crear un constructor inválido.
-  it('Given an empty email when i create the instance then it returns an error', () => {
-    const userEmail = new UserEmail('');
-    const objectForTest = getObjectValid();
-    objectForTest.email = userEmail;
-    expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(objectForTest),
-    ).toThrowError('Email is invalid');
-  });
-
-  it('Given an email that does not contain @ then returns an error', () => {
-    const userEmail = new UserEmail('email');
-    const objectForTest = getObjectValid();
-    objectForTest.email = userEmail;
-    expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(objectForTest),
-    ).toThrowError('Email is invalid');
-  });
-
-  it('Given an email that does not contain a dot then returns an error', () => {
-    const userEmail = new UserEmail('email');
-    const objectForTest = getObjectValid();
-    objectForTest.email = userEmail;
-    expect(() =>
-      User.isValidObjectToCreateAnUserOrThrows(objectForTest),
-    ).toThrowError('Email is invalid');
   });
 
   it('Given an name valid when i create the instance then i get said name ', () => {
@@ -64,7 +35,7 @@ describe('User class', () => {
     objectForTest.name = name;
     expect(() =>
       User.isValidObjectToCreateAnUserOrThrows(objectForTest),
-    ).toThrowError('Name is invalid');
+    ).toThrowError(User.ERROR_NAME_IS_INVALID);
   });
 
   it('Given an surname valid when i create the instance then i get said surname', () => {
@@ -82,7 +53,7 @@ describe('User class', () => {
     objectForTest.surname = surname;
     expect(() =>
       User.isValidObjectToCreateAnUserOrThrows(objectForTest),
-    ).toThrowError('Surname is invalid');
+    ).toThrowError(User.ERROR_SURNAME_IS_INVALID);
   });
 
   it('Given a valid document type and number when creating then i can get them', () => {
