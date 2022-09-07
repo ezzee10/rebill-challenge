@@ -16,7 +16,10 @@ describe('UsersController', () => {
   });
 
   let app: INestApplication;
-  const userRepository = { addUser: () => userCreatedFakeInstance };
+  const userRepository = {
+    addUser: () => userCreatedFakeInstance,
+    findByEmail: () => null,
+  };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
