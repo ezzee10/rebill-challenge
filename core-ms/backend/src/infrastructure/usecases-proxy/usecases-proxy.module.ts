@@ -1,11 +1,13 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { AddUserUseCase } from '../../application/usescases/users/addUser.usecases';
+import { ExceptionsModule } from '../exceptions/exceptions.module';
+import { ExceptionService } from '../exceptions/exceptions.service';
 import { RepositoriesModule } from '../repositories/repositories.module';
 import { DatabaseUserRepository } from '../repositories/user.repository';
 import { UseCaseProxy } from './usecases-proxy';
 
 @Module({
-  imports: [RepositoriesModule],
+  imports: [RepositoriesModule, ExceptionsModule],
 })
 export class UseCasesProxyModule {
   static ADD_USER_USECASES_PROXY = 'addUserUsecaseProxy';
@@ -15,10 +17,12 @@ export class UseCasesProxyModule {
       module: UseCasesProxyModule,
       providers: [
         {
-          inject: [DatabaseUserRepository],
+          inject: [DatabaseUserRepository, ExceptionService],
           provide: UseCasesProxyModule.ADD_USER_USECASES_PROXY,
-          useFactory: (userRepository: DatabaseUserRepository) =>
-            new UseCaseProxy(new AddUserUseCase(userRepository)),
+          useFactory: (
+            userRepository: DatabaseUserRepository, 
+            exceptionService: ExceptionService
+          ) => new UseCaseProxy(new AddUserUseCase(userRepository, exceptionService)),
         },
       ],
       exports: [UseCasesProxyModule.ADD_USER_USECASES_PROXY],

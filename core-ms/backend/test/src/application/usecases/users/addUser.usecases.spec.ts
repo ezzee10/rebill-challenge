@@ -6,6 +6,7 @@ import { UserModel } from '../../../../../src/infrastructure/models/user.model';
 import { getUserValidForTest } from '../../../domain/fakeForTest/userForTest';
 import { Repository } from 'typeorm';
 import { getUserModelValidForTest } from '../../../domain/fakeForTest/userModelForTest';
+import { ExceptionService } from '../../../../../src/infrastructure/exceptions/exceptions.service';
 
 export type MockType<T> = {
   [P in keyof T]?: jest.Mock<{}>;
@@ -29,6 +30,7 @@ describe('AddUserUseCase', () => {
       providers: [
         DatabaseUserRepository,
         AddUserUseCase,
+        ExceptionService,
         {
           provide: getRepositoryToken(UserModel),
           useFactory: repositoryMockFactory,
@@ -41,7 +43,7 @@ describe('AddUserUseCase', () => {
     );
     userRepositoryMock = moduleRef.get(getRepositoryToken(UserModel));
 
-    addUserUseCase = new AddUserUseCase(userRepository);
+    addUserUseCase = new AddUserUseCase(userRepository, new ExceptionService());
   });
 
   it('Return new instance when adding a user whose email is not found', async () => {

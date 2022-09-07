@@ -34,27 +34,28 @@ describe('UsersController', () => {
   });
 
   describe('POST /users/signup', () => {
+
+    const userCreatedFakeResponse = {
+      email: 'test@test.com',
+      name: 'Test',
+      surname: 'Test',
+      document: {
+        type: 'DNI',
+        number: 38778788,
+      },
+    };
+
+    const userFakeBody = {
+      name: 'Test',
+      surname: 'Test',
+      email: 'test@test.com',
+      document: {
+        type: 'DNI',
+        number: 30303030,
+      },
+    };
+
     it('should return the created user and status code 201', async () => {
-      const userCreatedFakeResponse = {
-        email: 'test@test.com',
-        name: 'Test',
-        surname: 'Test',
-        document: {
-          type: 'DNI',
-          number: 38778788,
-        },
-      };
-
-      const userFakeBody = {
-        name: 'Test',
-        surname: 'Test',
-        email: 'test@test.com',
-        document: {
-          type: 'DNI',
-          number: 30303030,
-        },
-      };
-
       return request(app.getHttpServer())
         .post('/users/signup')
         .send(userFakeBody)
