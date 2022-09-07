@@ -2,11 +2,15 @@ import { User } from '../../../domain/entity/user';
 import { IUserRepository } from 'src/domain/repositories/userRepository.interface';
 import { Document } from '../../../domain/value-objects/document';
 import { UserEmail } from '../../../domain/value-objects/userEmail';
-
+import { ExceptionService } from 'src/infrastructure/exceptions/exceptions.service';
 export class AddUserUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly exceptionService: ExceptionService
+  ) {}
 
-  static ERROR_ACCOUNT_EMAIL_MESSAGE = 'Account is already used';
+  static ERROR_ACCOUNT_EMAIL_MESSAGE = 'Email is already in use';
+  static ERROR_ACCOUNT_EMAIL_NUMBER = 409;
 
   async execute(
     email: string,
@@ -24,9 +28,10 @@ export class AddUserUseCase {
 
       const foundUser = await this.userRepository.findByEmail(email);
 
-      /**TODO: Implementar modelos de error */
       if (foundUser)
-        throw new Error(AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE);
+        this.exceptionService.functionalException(
+          AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE
+        )
 
       const newUser = await this.userRepository.addUser(userInstance);
       return newUser;
