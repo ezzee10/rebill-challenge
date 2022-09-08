@@ -17,6 +17,9 @@ export class UserModel {
   email: string;
 
   @Column('varchar')
+  password: string;
+
+  @Column('varchar')
   name: string;
 
   @Column('varchar')

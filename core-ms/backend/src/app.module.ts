@@ -4,6 +4,7 @@ import { UseCasesProxyModule } from './infrastructure/usecases-proxy/usecases-pr
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModel } from './infrastructure/models/user.model';
 import { ExceptionsModule } from './infrastructure/exceptions/exceptions.module';
+import { BcryptModule } from './infrastructure/services/bcrypt/bcrypt.module';
 @Module({
   imports: [
     /** TODO: Mover a un modulo aparte */
@@ -20,7 +21,8 @@ import { ExceptionsModule } from './infrastructure/exceptions/exceptions.module'
     }),
     ControllerModule,
     UseCasesProxyModule.register(),
-    ExceptionsModule
+    ExceptionsModule,
+    BcryptModule,
   ],
   controllers: [],
   providers: [],

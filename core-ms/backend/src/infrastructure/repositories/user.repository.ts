@@ -41,6 +41,7 @@ export class DatabaseUserRepository implements IUserRepository {
   private toUserModel(userEntity: User): UserModel {
     const userModel: UserModel = new UserModel();
     userModel.email = userEntity.getEmail().getUserEmail();
+    userModel.password = userEntity.getPassword();
     userModel.name = userEntity.getName();
     userModel.surname = userEntity.getSurname();
     (userModel.documentType = userEntity.getDocument().getType()),
@@ -52,6 +53,7 @@ export class DatabaseUserRepository implements IUserRepository {
   private toUserEntity(userModel: UserModel): User {
     const userEntity: User = User.fromPlainObject({
       email: new UserEmail(userModel.email),
+      password: userModel.password,
       name: userModel.name,
       surname: userModel.surname,
       document: Document.createFrom(

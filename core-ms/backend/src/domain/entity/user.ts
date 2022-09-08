@@ -6,10 +6,17 @@ export class User {
   private name: string;
   private surname: string;
   private document: Document;
+  private password: string;
 
   static fromPlainObject(object: UserPlainObjectInterface) {
     this.isValidObjectToCreateAnUserOrThrows(object);
-    return new User(object.email, object.name, object.surname, object.document);
+    return new User(
+      object.email,
+      object.password,
+      object.name,
+      object.surname,
+      object.document,
+    );
   }
 
   static isValidObjectToCreateAnUserOrThrows(object: UserPlainObjectInterface) {
@@ -20,13 +27,16 @@ export class User {
     if (surname.length <= 0) throw new Error(User.ERROR_SURNAME_IS_INVALID);
   }
 
+  // TODO: Aplicar algun patron de construcción como Builder
   constructor(
     email: UserEmail,
+    password: string,
     name: string,
     surname: string,
     document: Document,
   ) {
     this.email = email;
+    this.password = password;
     this.name = name;
     this.surname = surname;
     this.document = document;
@@ -34,6 +44,10 @@ export class User {
 
   getDocument(): Document {
     return this.document;
+  }
+
+  getPassword(): string {
+    return this.password;
   }
 
   getName(): string {

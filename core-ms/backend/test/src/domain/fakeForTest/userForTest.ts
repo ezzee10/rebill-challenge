@@ -5,6 +5,7 @@ import { UserEmail } from '../../../../src/domain/value-objects/userEmail';
 export const getUserValidForTest = (): User => {
   return User.fromPlainObject({
     email: UserEmail.createFrom('test@test.com'),
+    password: '1234567a@',
     name: 'NombreTest',
     surname: 'ApellidoTest',
     document: Document.createFrom('DNI', 30303030),
