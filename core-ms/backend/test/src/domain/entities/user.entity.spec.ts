@@ -1,11 +1,13 @@
 import { User } from '../../../../src/domain/entity/user';
 import { UserEmail } from '../../../../src/domain/value-objects/userEmail';
 import { Document } from '../../../../src/domain/value-objects/document';
+import { getUserValidForTest } from '../fakeForTest/userForTest';
 
 describe('User class', () => {
   const getObjectValid = () => {
     return {
       email: UserEmail.createFrom('test@test.com'),
+      password: '1234567a@',
       name: 'Ezequiel',
       surname: 'Colombano',
       document: Document.createFrom('DNI', 38998408),

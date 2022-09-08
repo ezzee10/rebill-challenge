@@ -1,19 +1,14 @@
 import * as request from 'supertest';
+import { ValidationPipe } from '@nestjs/common';
 import { DatabaseUserRepository } from '../../../../../src/infrastructure/repositories/user.repository';
-import { UserEmail } from '../../../../../src/domain/value-objects/userEmail';
-import { Document } from '../../../../../src/domain/value-objects/document';
-import { User } from '../../../../../src/domain/entity/user';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../../../../src/app.module';
+import { getUserValidForTest } from '../../../../../test/src/domain/fakeForTest/userForTest';
+import { errorMessages } from '../../../../../src/domain/exceptions/error.messages';
 
 describe('UsersController', () => {
-  const userCreatedFakeInstance = User.fromPlainObject({
-    email: UserEmail.createFrom('test@test.com'),
-    name: 'Test',
-    surname: 'Test',
-    document: Document.createFrom('DNI', 38778788),
-  });
+  const userCreatedFakeInstance = getUserValidForTest();
 
   let app: INestApplication;
   const userRepository = {
@@ -30,24 +25,25 @@ describe('UsersController', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
   describe('POST /users/signup', () => {
-
     const userCreatedFakeResponse = {
       email: 'test@test.com',
-      name: 'Test',
-      surname: 'Test',
+      name: 'NombreTest',
+      surname: 'ApellidoTest',
       document: {
         type: 'DNI',
-        number: 38778788,
+        number: 30303030,
       },
     };
 
     const userFakeBody = {
-      name: 'Test',
-      surname: 'Test',
+      name: 'NombreTest',
+      password: 'password123!',
+      surname: 'ApellidoTest',
       email: 'test@test.com',
       document: {
         type: 'DNI',
@@ -61,6 +57,51 @@ describe('UsersController', () => {
         .send(userFakeBody)
         .expect(201)
         .expect(userCreatedFakeResponse);
+    });
+
+    it('should return the error if the password is less than 8 characters', async () => {
+      const userFakeBodyPasswordIncorrect = userFakeBody;
+      userFakeBodyPasswordIncorrect.password = 'abcd';
+
+      const res = await request(app.getHttpServer())
+        .post('/users/signup')
+        .send(userFakeBodyPasswordIncorrect);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Bad Request');
+      expect(res.body).toHaveProperty('message', [
+        errorMessages.invalidPassword,
+      ]);
+    });
+
+    it('should return the error if the password does not contain at least one number', async () => {
+      const userFakeBodyPasswordIncorrect = userFakeBody;
+      userFakeBodyPasswordIncorrect.password = 'abcdefgh';
+
+      const res = await request(app.getHttpServer())
+        .post('/users/signup')
+        .send(userFakeBodyPasswordIncorrect);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Bad Request');
+      expect(res.body).toHaveProperty('message', [
+        errorMessages.invalidPassword,
+      ]);
+    });
+
+    it('should return the error if the password does not contain at least one special character', async () => {
+      const userFakeBodyPasswordIncorrect = userFakeBody;
+      userFakeBodyPasswordIncorrect.password = 'abcdefgh11';
+
+      const res = await request(app.getHttpServer())
+        .post('/users/signup')
+        .send(userFakeBodyPasswordIncorrect);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Bad Request');
+      expect(res.body).toHaveProperty('message', [
+        errorMessages.invalidPassword,
+      ]);
     });
   });
 

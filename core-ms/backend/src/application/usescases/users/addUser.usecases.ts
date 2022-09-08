@@ -3,37 +3,44 @@ import { IUserRepository } from 'src/domain/repositories/userRepository.interfac
 import { Document } from '../../../domain/value-objects/document';
 import { UserEmail } from '../../../domain/value-objects/userEmail';
 import { ExceptionService } from 'src/infrastructure/exceptions/exceptions.service';
+import { IBcryptService } from 'src/domain/adapters/bcrypt.interface';
 export class AddUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly exceptionService: ExceptionService
+    private readonly exceptionService: ExceptionService,
+    private readonly bcryptService: IBcryptService,
   ) {}
 
+  //TODO: Crear una clase que mapee estos errores
   static ERROR_ACCOUNT_EMAIL_MESSAGE = 'Email is already in use';
   static ERROR_ACCOUNT_EMAIL_NUMBER = 409;
 
   async execute(
     email: string,
+    password: string,
     name: string,
     surname: string,
     document: { type: string; number: number },
   ): Promise<User> {
+    const passwordHashed = await this.bcryptService.hash(password);
+
     /*TODO: IMPLEMENTAR LOGGER */
-      const userInstance = User.fromPlainObject({
-        email: UserEmail.createFrom(email),
-        name,
-        surname,
-        document: Document.createFrom(document.type, document.number),
-      });
+    const userInstance = User.fromPlainObject({
+      email: UserEmail.createFrom(email),
+      password: passwordHashed,
+      name,
+      surname,
+      document: Document.createFrom(document.type, document.number),
+    });
 
-      const foundUser = await this.userRepository.findByEmail(email);
+    const foundUser = await this.userRepository.findByEmail(email);
 
-      if (foundUser)
-        this.exceptionService.functionalException(
-          AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE
-        )
+    if (foundUser)
+      this.exceptionService.functionalException(
+        AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE,
+      );
 
-      const newUser = await this.userRepository.addUser(userInstance);
-      return newUser;
+    const newUser = await this.userRepository.addUser(userInstance);
+    return newUser;
   }
 }

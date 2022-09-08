@@ -4,10 +4,12 @@ import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { ExceptionService } from '../exceptions/exceptions.service';
 import { RepositoriesModule } from '../repositories/repositories.module';
 import { DatabaseUserRepository } from '../repositories/user.repository';
+import { BcryptModule } from '../services/bcrypt/bcrypt.module';
+import { BcryptService } from '../services/bcrypt/bcrypt.service';
 import { UseCaseProxy } from './usecases-proxy';
 
 @Module({
-  imports: [RepositoriesModule, ExceptionsModule],
+  imports: [RepositoriesModule, ExceptionsModule, BcryptModule],
 })
 export class UseCasesProxyModule {
   static ADD_USER_USECASES_PROXY = 'addUserUsecaseProxy';
@@ -17,12 +19,20 @@ export class UseCasesProxyModule {
       module: UseCasesProxyModule,
       providers: [
         {
-          inject: [DatabaseUserRepository, ExceptionService],
+          inject: [DatabaseUserRepository, ExceptionService, BcryptService],
           provide: UseCasesProxyModule.ADD_USER_USECASES_PROXY,
           useFactory: (
-            userRepository: DatabaseUserRepository, 
-            exceptionService: ExceptionService
-          ) => new UseCaseProxy(new AddUserUseCase(userRepository, exceptionService)),
+            userRepository: DatabaseUserRepository,
+            exceptionService: ExceptionService,
+            bcryptService: BcryptService,
+          ) =>
+            new UseCaseProxy(
+              new AddUserUseCase(
+                userRepository,
+                exceptionService,
+                bcryptService,
+              ),
+            ),
         },
       ],
       exports: [UseCasesProxyModule.ADD_USER_USECASES_PROXY],

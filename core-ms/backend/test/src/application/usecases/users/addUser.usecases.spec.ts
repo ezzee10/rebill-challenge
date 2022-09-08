@@ -1,12 +1,14 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
+import { Repository } from 'typeorm';
 import { AddUserUseCase } from '../../../../../src/application/usescases/users/addUser.usecases';
 import { DatabaseUserRepository } from '../../../../../src/infrastructure/repositories/user.repository';
-import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserModel } from '../../../../../src/infrastructure/models/user.model';
 import { getUserValidForTest } from '../../../domain/fakeForTest/userForTest';
-import { Repository } from 'typeorm';
 import { getUserModelValidForTest } from '../../../domain/fakeForTest/userModelForTest';
 import { ExceptionService } from '../../../../../src/infrastructure/exceptions/exceptions.service';
+import { BcryptService } from '../../../../../src/infrastructure/services/bcrypt/bcrypt.service';
+import { BcryptModule } from '../../../../../src/infrastructure/services/bcrypt/bcrypt.module';
 
 export type MockType<T> = {
   [P in keyof T]?: jest.Mock<{}>;
@@ -24,38 +26,54 @@ describe('AddUserUseCase', () => {
   let userRepository: DatabaseUserRepository;
   let addUserUseCase: AddUserUseCase;
   let userRepositoryMock: MockType<Repository<UserModel>>;
+  let bcryptService: BcryptService;
+
+  const user = getUserValidForTest();
+  const userModel = getUserModelValidForTest();
+
+  const bcryptMock = {
+    hash: () => user.getPassword(),
+  };
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [BcryptModule],
       providers: [
         DatabaseUserRepository,
         AddUserUseCase,
         ExceptionService,
+        BcryptService,
         {
           provide: getRepositoryToken(UserModel),
           useFactory: repositoryMockFactory,
         },
       ],
-    }).compile();
+    })
+      .overrideProvider(BcryptService)
+      .useValue(bcryptMock)
+      .compile();
 
     userRepository = moduleRef.get<DatabaseUserRepository>(
       DatabaseUserRepository,
     );
     userRepositoryMock = moduleRef.get(getRepositoryToken(UserModel));
+    bcryptService = moduleRef.get<BcryptService>(BcryptService);
 
-    addUserUseCase = new AddUserUseCase(userRepository, new ExceptionService());
+    addUserUseCase = new AddUserUseCase(
+      userRepository,
+      new ExceptionService(),
+      bcryptService,
+    );
   });
 
   it('Return new instance when adding a user whose email is not found', async () => {
-    const user = getUserValidForTest();
-    const userModel = getUserModelValidForTest();
-
     userRepositoryMock.findOne.mockReturnValue(null);
     userRepositoryMock.save.mockReturnValue(userModel);
 
     expect(
       await addUserUseCase.execute(
         user.getEmail().getUserEmail(),
+        user.getPassword(),
         user.getName(),
         user.getSurname(),
         {
@@ -67,22 +85,21 @@ describe('AddUserUseCase', () => {
   });
 
   it('Return error if the error is already used', async () => {
-    const user = getUserValidForTest();
-    const userModel = getUserModelValidForTest();
-
     // Returns user found by mock
     userRepositoryMock.findOne.mockReturnValue(userModel);
     userRepositoryMock.save.mockReturnValue(userModel);
 
     expect(
-        addUserUseCase.execute(
-          user.getEmail().getUserEmail(),
-          user.getName(),
-          user.getSurname(),
-          {
-            type: user.getDocument().getType(),
-            number: user.getDocument().getNumber(),
-          },
-        )).rejects.toThrow(AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE);
+      addUserUseCase.execute(
+        user.getEmail().getUserEmail(),
+        user.getPassword(),
+        user.getName(),
+        user.getSurname(),
+        {
+          type: user.getDocument().getType(),
+          number: user.getDocument().getNumber(),
+        },
+      ),
+    ).rejects.toThrow(AddUserUseCase.ERROR_ACCOUNT_EMAIL_MESSAGE);
   });
 });

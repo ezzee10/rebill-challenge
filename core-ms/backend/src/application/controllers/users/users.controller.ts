@@ -13,11 +13,11 @@ export class UsersController {
 
   @Post('signup')
   async addUser(@Body() addUserDto: AddUserDto) {
-    const { email, name, surname, document } = addUserDto;
+    const { email, password, name, surname, document } = addUserDto;
 
     const userCreated = await this.addUserUseCase
       .getInstance()
-      .execute(email, name, surname, document);
+      .execute(email, password, name, surname, document);
 
     // TODO: CREAR CAPA DE PRESENTACIÓN
     return {

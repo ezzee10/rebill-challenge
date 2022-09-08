@@ -2,6 +2,7 @@ CREATE TABLE users
 (
     id SERIAL PRIMARY KEY,
     email VARCHAR(30) NOT NULL,
+    password VARCHAR(15) NOT NULL,
     name VARCHAR(20) NOT NULL,
     surname VARCHAR(30) NOT NULL,
     documentType VARCHAR(4) NOT NULL,
