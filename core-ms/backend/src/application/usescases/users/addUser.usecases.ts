@@ -13,7 +13,6 @@ export class AddUserUseCase {
 
   //TODO: Crear una clase que mapee estos errores
   static ERROR_ACCOUNT_EMAIL_MESSAGE = 'Email is already in use';
-  static ERROR_ACCOUNT_EMAIL_NUMBER = 409;
 
   async execute(
     email: string,

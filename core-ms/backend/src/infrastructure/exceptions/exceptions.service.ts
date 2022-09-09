@@ -1,5 +1,5 @@
 import { IException } from '../../../src/domain/exceptions/exceptions.interface';
-import { FunctionalException, BadRequestException } from './exceptions';
+import { FunctionalException, BadRequestException, UnauthorizedException } from './exceptions';
 
 export class ExceptionService implements IException {
   functionalException(message: string): void {
@@ -8,5 +8,9 @@ export class ExceptionService implements IException {
 
   badRequestException(message: string): void {
     throw new BadRequestException(message);
+  }
+
+  unauthorizedException(message: string): void {
+    throw new UnauthorizedException(message);
   }
 }
